@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>NCE 1 Community Cat Tracker</title>
+    <style>
+        body { background-color: #FDFBF7; font-family: sans-serif; }
+        .calico-gradient { background: linear-gradient(135deg, #E68A4F 0%, #333333 100%); }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const API_URL = 'REPLACE_WITH_YOUR_URL'; // <--- PASTE YOUR /exec URL HERE
+
+        function App() {
+            const [cats, setCats] = React.useState([]);
+            const [loading, setLoading] = React.useState(true);
+            const [search, setSearch] = React.useState("");
+
+            React.useEffect(() => {
+                fetch(API_URL)
+                    .then(res => res.json())
+                    .then(data => {
+                        setCats(data);
+                        setLoading(false);
+                    })
+                    .catch(err => console.error("Error loading cats:", err));
+            }, []);
+
+            const filteredCats = cats.filter(cat => 
+                cat.name.toLowerCase().includes(search.toLowerCase()) || 
+                cat.location.toLowerCase().includes(search.toLowerCase())
+            );
+
+            if (loading) return (
+                <div className="flex flex-col items-center justify-center min-h-screen">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E68A4F]"></div>
+                    <p className="mt-4 text-gray-600 font-medium">Fetching the community cats...</p>
+                </div>
+            );
+
+            return (
+                <div className="max-w-6xl mx-auto px-4 py-8">
+                    {/* HEADER */}
+                    <header className="text-center mb-12">
+                        <h1 className="text-4xl font-bold text-[#333333] mb-2">🐈 NCE 1 Cat Tracker</h1>
+                        <p className="text-gray-500">Keeping our community strays safe and healthy.</p>
+                        
+                        <div className="mt-8 max-w-md mx-auto">
+                            <input 
+                                type="text" 
+                                placeholder="Search by name or location..." 
+                                className="w-full px-6 py-3 rounded-full border-2 border-gray-200 focus:border-[#E68A4F] outline-none shadow-sm"
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                        </div>
+                    </header>
+
+                    {/* GRID */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {filteredCats.map((cat, index) => (
+                            <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border-b-4 border-[#E68A4F]">
+                                <div className="h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
+                                    {/* If you add a 'Photo' column later, change 'null' to cat.photo */}
+                                    {cat.photo ? (
+                                        <img src={cat.photo} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="text-4xl">🐱</span>
+                                    )}
+                                </div>
+                                <div className="p-6">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h2 className="text-2xl font-bold text-[#333333]">{cat.name}</h2>
+                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">{cat.gender}</span>
+                                        </div>
+                                        <div className="flex gap-2 text-xl">
+                                            {cat.spayedNeutered === "Yes" ? "✂️" : "🥚"}
+                                        </div>
+                                    </div>
+                                    
+                                    <p className="text-gray-600 text-sm mb-4 italic line-clamp-2">"{cat.description}"</p>
+                                    
+                                    <div className="space-y-2 border-t pt-4 text-sm">
+                                        <div className="flex items-center text-gray-700">
+                                            <span className="w-6">📍</span> <strong>Location:</strong> <span className="ml-2">{cat.location}</span>
+                                        </div>
+                                        <div className="flex items-center text-gray-700">
+                                            <span className="w-6">🍽️</span> <strong>Feeder:</strong> <span className="ml-2">{cat.feeder}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* EMPTY STATE */}
+                    {filteredCats.length === 0 && (
+                        <div className="text-center py-20">
+                            <p className="text-gray-400">No cats found in this area. 🐾</p>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
