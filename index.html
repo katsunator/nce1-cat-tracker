@@ -82,7 +82,7 @@
                                     const valB = (b[sortBy] || "").toString().toLowerCase();
                                     return valA.localeCompare(valB);
                             })
-                            map((cat, index) => (
+                            .map((cat, index) => (
                             <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-md border-b-4 border-[#E68A4F]">
                                 <div className="p-6">
                                     <h2 className="text-2xl font-bold text-[#333333]">{cat.catNameNickname || "Unknown Cat"}</h2>
