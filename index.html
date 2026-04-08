@@ -22,22 +22,21 @@
             const [cats, setCats] = React.useState([]);
             const [loading, setLoading] = React.useState(true);
             const [search, setSearch] = React.useState("");
-            const [sortBy, setSortBy] = React.useState("catNameNickname"); // This is the new one
+            const [sortBy, setSortBy] = React.useState("catNameNickname");
             const [lastSync, setLastSync] = React.useState("");
-            
+
             React.useEffect(() => {
                 const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(API_URL);
                 fetch(proxyUrl)
                     .then(res => res.json())
                     .then(data => {
                         setCats(data);
-                        // Formats as: Apr 8, 6:40 PM
-                        setLastSync(new Date().toLocaleString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric', 
-                        hour: '2-digit', 
-                        minute: '2-digit',
-                        hour12: true 
+                        setLastSync(new Date().toLocaleString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
                         }));
                         setLoading(false);
                     })
@@ -66,62 +65,67 @@
                 <div className="max-w-6xl mx-auto px-4 py-8">
                     <header className="text-center mb-12">
                         <h1 className="text-4xl font-bold text-[#333333] mb-2">🐈 NCE 1 Cat Tracker</h1>
-                            <div className="mt-6 flex flex-col md:flex-row gap-4 justify-center items-center w-full max-w-2xl mx-auto">
-                                <input 
-                                    type="text" 
-                                    placeholder="Search by name or street..." 
-                                    className="w-full px-6 py-3 rounded-full border-2 border-gray-200 focus:border-[#E68A4F] outline-none shadow-sm"
-                                    onChange={(e) => setSearch(e.target.value)}
-                                />
-                                <select 
-                                    className="px-4 py-3 rounded-full border-2 border-gray-200 bg-white text-gray-600 outline-none focus:border-[#E68A4F] cursor-pointer"
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                >
-                                    <option value="catNameNickname">Sort by Name</option>
-                                    <option value="street">Sort by Street</option>
-                                </select>
-                            </div>
+                        
+                        <div className="flex flex-col gap-1">
+                            <p className="text-[#E68A4F] font-bold text-lg">
+                                Total number of Cats: {cats.length}
+                            </p>
+                            <p className="text-gray-400 text-[10px] uppercase tracking-widest font-bold">
+                                Last Synced with Sheet: {lastSync}
+                            </p>
+                        </div>
+
+                        <div className="mt-6 flex flex-col md:flex-row gap-4 justify-center items-center w-full max-w-2xl mx-auto">
+                            <input 
+                                type="text" 
+                                placeholder="Search by name or street..." 
+                                className="w-full px-6 py-3 rounded-full border-2 border-gray-200 focus:border-[#E68A4F] outline-none shadow-sm"
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                            <select 
+                                className="px-4 py-3 rounded-full border-2 border-gray-200 bg-white text-gray-600 outline-none focus:border-[#E68A4F] cursor-pointer"
+                                onChange={(e) => setSortBy(e.target.value)}
+                            >
+                                <option value="catNameNickname">Sort by Name</option>
+                                <option value="street">Sort by Street</option>
+                            </select>
+                        </div>
                     </header>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredCats
                             .sort((a, b) => {
-                                    // This pulls the value based on what you picked in the dropdown
-                                    const valA = (a[sortBy] || "").toString().toLowerCase();
-                                    const valB = (b[sortBy] || "").toString().toLowerCase();
-                                    return valA.localeCompare(valB);
+                                const valA = (a[sortBy] || "").toString().toLowerCase();
+                                const valB = (b[sortBy] || "").toString().toLowerCase();
+                                return valA.localeCompare(valB);
                             })
                             .map((cat, index) => (
-                            <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-md border-b-4 border-[#E68A4F]">
-                                <div className="p-6">
-                                    <h2 className="text-2xl font-bold text-[#333333]">{cat.catNameNickname || "Unknown Cat"}</h2>
-                                    <p className="text-gray-500 text-sm mb-2">📍 {cat.street || "Unknown Street"}</p>
-                                    
-                                    <div className="flex flex-wrap gap-2 mb-4">
-                                        <span className="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold uppercase tracking-wider">
-                                            {cat.gender || "Unknown"}
-                                        </span>
-                                        <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${cat.spayed === "Yes" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                                            {cat.spayed === "Yes" ? "Spayed ✨" : "Not Spayed"}
-                                        </span>
-                                    </div>
+                                <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-md border-b-4 border-[#E68A4F]">
+                                    <div className="p-6">
+                                        <h2 className="text-2xl font-bold text-[#333333]">{cat.catNameNickname || "Unknown Cat"}</h2>
+                                        <p className="text-gray-500 text-sm mb-2">📍 {cat.street || "Unknown Street"}</p>
+                                        
+                                        <div className="flex flex-wrap gap-2 mb-4">
+                                            <span className="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold uppercase tracking-wider">
+                                                {cat.gender || "Unknown"}
+                                            </span>
+                                            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${cat.spayed === "Yes" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                                                {cat.spayed === "Yes" ? "Spayed ✨" : "Not Spayed"}
+                                            </span>
+                                        </div>
 
-                                    <div className="border-t pt-4 space-y-2 text-sm">
-                                        <p><strong>Color:</strong> {cat.colorDescription || "N/A"}</p>
-                                        <p><strong>Fed Regularly:</strong> {cat.regularlyFed || "N/A"}</p>
-                                        <p><strong>Vaccinated:</strong> {cat.vaccinatedAntiRabies || "N/A"}</p>
-                                        <p className="italic text-gray-600 mt-2">"{cat.notes || "No additional notes."}"</p>
+                                        <div className="border-t pt-4 space-y-2 text-sm">
+                                            <p><strong>Color:</strong> {cat.colorDescription || "N/A"}</p>
+                                            <p><strong>Fed Regularly:</strong> {cat.regularlyFed || "N/A"}</p>
+                                            <p><strong>Vaccinated:</strong> {cat.vaccinatedAntiRabies || "N/A"}</p>
+                                            <p className="italic text-gray-600 mt-2">"{cat.notes || "No additional notes."}"</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 </div>
             );
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+        const root = ReactDOM.createRoot(document.
