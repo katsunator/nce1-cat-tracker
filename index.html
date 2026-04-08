@@ -22,7 +22,8 @@
             const [cats, setCats] = React.useState([]);
             const [loading, setLoading] = React.useState(true);
             const [search, setSearch] = React.useState("");
-
+            const [sortBy, setSortBy] = React.useState("catNameNickname"); // This is the new one
+            
             React.useEffect(() => {
                 const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(API_URL);
                 fetch(proxyUrl)
@@ -56,12 +57,21 @@
                 <div className="max-w-6xl mx-auto px-4 py-8">
                     <header className="text-center mb-12">
                         <h1 className="text-4xl font-bold text-[#333333] mb-2">🐈 NCE 1 Cat Tracker</h1>
-                        <input 
-                            type="text" 
-                            placeholder="Search by name or street..." 
-                            className="mt-6 w-full max-w-md px-6 py-3 rounded-full border-2 border-gray-200 focus:border-[#E68A4F] outline-none shadow-sm"
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
+                            <div className="mt-6 flex flex-col md:flex-row gap-4 justify-center items-center w-full max-w-2xl mx-auto">
+                                <input 
+                                    type="text" 
+                                    placeholder="Search by name or street..." 
+                                    className="w-full px-6 py-3 rounded-full border-2 border-gray-200 focus:border-[#E68A4F] outline-none shadow-sm"
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                                <select 
+                                    className="px-4 py-3 rounded-full border-2 border-gray-200 bg-white text-gray-600 outline-none focus:border-[#E68A4F] cursor-pointer"
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                >
+                                    <option value="catNameNickname">Sort by Name</option>
+                                    <option value="street">Sort by Street</option>
+                                </select>
+                            </div>
                     </header>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
