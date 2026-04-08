@@ -23,19 +23,23 @@
             const [loading, setLoading] = React.useState(true);
             const [search, setSearch] = React.useState("");
 
-            React.useEffect(() => {
-    // We use corsproxy.io to make sure Google plays nice with GitHub
-    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(API_URL);
+    React.useEffect(() => {
+            // This line combines the proxy and your URL correctly
+            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(API_URL);
     
     fetch(proxyUrl)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
         .then(data => {
+            console.log("Success!", data);
             setCats(data);
             setLoading(false);
         })
         .catch(err => {
-            console.error("Error loading cats:", err);
-            // This will show you the real error in the console
+            console.error("The error is:", err);
+            setLoading(false);
         });
 }, []);
 
