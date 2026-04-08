@@ -25,14 +25,20 @@
             const [search, setSearch] = React.useState("");
 
             React.useEffect(() => {
-                fetch(API_URL)
-                    .then(res => res.json())
-                    .then(data => {
-                        setCats(data);
-                        setLoading(false);
-                    })
-                    .catch(err => console.error("Error loading cats:", err));
-            }, []);
+    // We use corsproxy.io to make sure Google plays nice with GitHub
+    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(API_URL);
+    
+    fetch(proxyUrl)
+        .then(res => res.json())
+        .then(data => {
+            setCats(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            console.error("Error loading cats:", err);
+            // This will show you the real error in the console
+        });
+}, []);
 
             const filteredCats = cats.filter(cat => 
                 cat.name.toLowerCase().includes(search.toLowerCase()) || 
