@@ -23,6 +23,7 @@
             const [loading, setLoading] = React.useState(true);
             const [search, setSearch] = React.useState("");
             const [sortBy, setSortBy] = React.useState("catNameNickname"); // This is the new one
+            const [lastSync, setLastSync] = React.useState("");
             
             React.useEffect(() => {
                 const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(API_URL);
@@ -30,6 +31,14 @@
                     .then(res => res.json())
                     .then(data => {
                         setCats(data);
+                        // Formats as: Apr 8, 6:40 PM
+                        setLastSync(new Date().toLocaleString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        hour12: true 
+                        }));
                         setLoading(false);
                     })
                     .catch(err => {
