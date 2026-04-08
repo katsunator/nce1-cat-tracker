@@ -18,6 +18,16 @@
     <script type="text/babel">
         const API_URL = 'https://script.google.com/macros/s/AKfycbw1q-xlR7Tt3I_v4NReh5prHyO1j_k2Qhw1jK3kkXGpPX7M2tfRuqxK0nzSw5q7UKXu/exec';
 
+        const getImageUrl = (url) => {
+            if (!url) return "https://placehold.co/600x400?text=No+Photo+Yet";
+            // If it's a Google Drive link, convert it to a direct display link
+            if (url.includes('drive.google.com')) {
+                const id = url.split('/d/')[1]?.split('/')[0];
+                return `https://lh3.googleusercontent.com/d/${id}`;
+            }
+            return url;
+        };
+
         function App() {
             const [cats, setCats] = React.useState([]);
             const [loading, setLoading] = React.useState(true);
@@ -100,7 +110,18 @@
                                 return valA.localeCompare(valB);
                             })
                             .map((cat, index) => (
-                                <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-md border-b-4 border-[#E68A4F]">
+                                <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-md border-b-4 border-[#E68A4F] flex flex-col">
+                                    {/* PHOTO SECTION */}
+                                    <div className="h-56 overflow-hidden bg-gray-100 border-b border-gray-100">
+                                        <img 
+                                            src={getImageUrl(cat.photoUrl)} 
+                                            alt={cat.catNameNickname}
+                                            className="w-full h-full object-cover"
+                                            loading="lazy"
+                                        />
+                                    </div>
+
+                                    {/* CONTENT SECTION */}
                                     <div className="p-6">
                                         <h2 className="text-2xl font-bold text-[#333333]">{cat.catNameNickname || "Unknown Cat"}</h2>
                                         <p className="text-gray-500 text-sm mb-2">📍 {cat.street || "Unknown Street"}</p>
@@ -128,8 +149,8 @@
             );
         }
 
-                            const root = ReactDOM.createRoot(document.getElementById('root'));
-                            root.render(<App />);
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
