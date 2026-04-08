@@ -43,10 +43,14 @@
         });
 }, []);
 
-            const filteredCats = cats.filter(cat => 
-                cat.name.toLowerCase().includes(search.toLowerCase()) || 
-                cat.location.toLowerCase().includes(search.toLowerCase())
-            );
+            const filteredCats = cats.filter(cat => {
+    // We use (cat.name || "") to say "use the name, OR use an empty string if it's missing"
+    const catName = (cat.name || "").toString().toLowerCase();
+    const catLocation = (cat.location || "").toString().toLowerCase();
+    const searchTerm = search.toLowerCase();
+
+    return catName.includes(searchTerm) || catLocation.includes(searchTerm);
+});
 
             if (loading) return (
                 <div className="flex flex-col items-center justify-center min-h-screen">
