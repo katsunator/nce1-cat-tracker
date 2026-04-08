@@ -10,7 +10,6 @@
     <title>NCE 1 Community Cat Tracker</title>
     <style>
         body { background-color: #FDFBF7; font-family: sans-serif; }
-        .calico-gradient { background: linear-gradient(135deg, #E68A4F 0%, #333333 100%); }
     </style>
 </head>
 <body>
@@ -18,46 +17,34 @@
 
     <script type="text/babel">
         const API_URL = 'https://script.google.com/macros/s/AKfycbw1q-xlR7Tt3I_v4NReh5prHyO1j_k2Qhw1jK3kkXGpPX7M2tfRuqxK0nzSw5q7UKXu/exec';
+
         function App() {
             const [cats, setCats] = React.useState([]);
             const [loading, setLoading] = React.useState(true);
             const [search, setSearch] = React.useState("");
 
-    React.useEffect(() => {
-            // This line combines the proxy and your URL correctly
-            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(API_URL);
-    
-    fetch(proxyUrl)
-        .then(res => {
-            if (!res.ok) throw new Error('Network response was not ok');
-            return res.json();
-        })
-        .then(data => {
-            console.log("Success!", data);
-            setCats(data);
-            setLoading(false);
-        })
-        .catch(err => {
-            console.error("The error is:", err);
-            setLoading(false);
-        });
-}, []);
+            React.useEffect(() => {
+                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(API_URL);
+                fetch(proxyUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                        setCats(data);
+                        setLoading(false);
+                    })
+                    .catch(err => {
+                        console.error("The error is:", err);
+                        setLoading(false);
+                    });
+            }, []);
 
-const filteredCats = cats.filter(cat => {
-    // 1. Skip rows that don't have a name (this handles your empty rows)
-    if (!cat.catNameNickname || cat.catNameNickname.toString().trim() === "") {
-        return false;
-    }
+            const filteredCats = cats.filter(cat => {
+                if (!cat.catNameNickname || cat.catNameNickname.toString().trim() === "") return false;
+                const catName = (cat.catNameNickname || "").toString().toLowerCase();
+                const catStreet = (cat.street || "").toString().toLowerCase();
+                const searchTerm = search.toLowerCase();
+                return catName.includes(searchTerm) || catStreet.includes(searchTerm);
+            });
 
-    // 2. Use the correct keys for the search
-    const catName = (cat.catNameNickname || "").toString().toLowerCase();
-    const catStreet = (cat.street || "").toString().toLowerCase();
-    const searchTerm = search.toLowerCase();
-
-    return catName.includes(searchTerm) || catStreet.includes(searchTerm);
-});
-
-           // This is the REAL loading screen. It shows while fetching data.
             if (loading) return (
                 <div className="flex flex-col items-center justify-center min-h-screen">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E68A4F]"></div>
@@ -65,7 +52,6 @@ const filteredCats = cats.filter(cat => {
                 </div>
             );
 
-            // This is the MAIN section that shows once the data arrives
             return (
                 <div className="max-w-6xl mx-auto px-4 py-8">
                     <header className="text-center mb-12">
