@@ -53,74 +53,31 @@
 });
 
             if (loading) return (
-                <div className="flex flex-col items-center justify-center min-h-screen">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E68A4F]"></div>
-                    <p className="mt-4 text-gray-600 font-medium">Fetching the community cats...</p>
-                </div>
-            );
+               <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-md border-b-4 border-[#E68A4F]">
+    <div className="p-6">
+        {/* Name and Street */}
+        <h2 className="text-2xl font-bold text-[#333333]">{cat.catNameNickname || "Unknown Cat"}</h2>
+        <p className="text-gray-500 text-sm mb-2">📍 {cat.street || "Unknown Street"}</p>
+        
+        {/* Badges for Status */}
+        <div className="flex flex-wrap gap-2 mb-4">
+            <span className="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold uppercase tracking-wider">
+                {cat.gender || "Unknown"}
+            </span>
+            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${cat.spayed === "Yes" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                {cat.spayed === "Yes" ? "Spayed ✨" : "Not Spayed"}
+            </span>
+        </div>
 
-            return (
-                <div className="max-w-6xl mx-auto px-4 py-8">
-                    {/* HEADER */}
-                    <header className="text-center mb-12">
-                        <h1 className="text-4xl font-bold text-[#333333] mb-2">🐈 NCE 1 Cat Tracker</h1>
-                        <p className="text-gray-500">Keeping our community strays safe and healthy.</p>
-                        
-                        <div className="mt-8 max-w-md mx-auto">
-                            <input 
-                                type="text" 
-                                placeholder="Search by name or location..." 
-                                className="w-full px-6 py-3 rounded-full border-2 border-gray-200 focus:border-[#E68A4F] outline-none shadow-sm"
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                        </div>
-                    </header>
-
-                    {/* GRID */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {filteredCats.map((cat, index) => (
-                            <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border-b-4 border-[#E68A4F]">
-                                <div className="h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
-                                    {/* If you add a 'Photo' column later, change 'null' to cat.photo */}
-                                    {cat.photo ? (
-                                        <img src={cat.photo} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <span className="text-4xl">🐱</span>
-                                    )}
-                                </div>
-                                <div className="p-6">
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div>
-                                            <h2 className="text-2xl font-bold text-[#333333]">{cat.name}</h2>
-                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">{cat.gender}</span>
-                                        </div>
-                                        <div className="flex gap-2 text-xl">
-                                            {cat.spayedNeutered === "Yes" ? "✂️" : "🥚"}
-                                        </div>
-                                    </div>
-                                    
-                                    <p className="text-gray-600 text-sm mb-4 italic line-clamp-2">"{cat.description}"</p>
-                                    
-                                    <div className="space-y-2 border-t pt-4 text-sm">
-                                        <div className="flex items-center text-gray-700">
-                                            <span className="w-6">📍</span> <strong>Location:</strong> <span className="ml-2">{cat.location}</span>
-                                        </div>
-                                        <div className="flex items-center text-gray-700">
-                                            <span className="w-6">🍽️</span> <strong>Feeder:</strong> <span className="ml-2">{cat.feeder}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* EMPTY STATE */}
-                    {filteredCats.length === 0 && (
-                        <div className="text-center py-20">
-                            <p className="text-gray-400">No cats found in this area. 🐾</p>
-                        </div>
-                    )}
-                </div>
+        {/* Detailed Information */}
+        <div className="border-t pt-4 space-y-2">
+            <p className="text-sm"><strong>Color:</strong> {cat.colorDescription || "N/A"}</p>
+            <p className="text-sm"><strong>Fed Regularly:</strong> {cat.regularlyFed || "N/A"}</p>
+            <p className="text-sm"><strong>Vaccinated:</strong> {cat.vaccinatedAntiRabies || "N/A"}</p>
+            <p className="text-sm italic text-gray-600 mt-2">"{cat.notes || "No additional notes."}"</p>
+        </div>
+    </div>
+</div>
             );
         }
 
