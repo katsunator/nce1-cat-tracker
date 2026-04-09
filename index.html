@@ -8,7 +8,6 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
     <title>NCE 1 Community Cat Registry</title>
     <style>
         body {
@@ -36,6 +35,49 @@
                 return "https://placehold.co/600x400?text=No+Photo+Yet";
             }
             return url;
+        };
+
+        // Simple Pie Chart Component
+        const PieChart = ({ data }) => {
+            let currentAngle = 0;
+            const paths = data.map((item, index) => {
+                const sliceAngle = (item.value / data.reduce((sum, d) => sum + d.value, 0)) * 360;
+                const x1 = 50 + 40 * Math.cos((currentAngle * Math.PI) / 180);
+                const y1 = 50 + 40 * Math.sin((currentAngle * Math.PI) / 180);
+                const x2 = 50 + 40 * Math.cos(((currentAngle + sliceAngle) * Math.PI) / 180);
+                const y2 = 50 + 40 * Math.sin(((currentAngle + sliceAngle) * Math.PI) / 180);
+                const largeArc = sliceAngle > 180 ? 1 : 0;
+                const pathD = `M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                currentAngle += sliceAngle;
+                return <path key={index} d={pathD} fill={item.fill} />;
+            });
+            return (
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                    {paths}
+                </svg>
+            );
+        };
+
+        // Simple Bar Chart Component
+        const BarChart = ({ data }) => {
+            const maxCount = Math.max(...data.map(d => d.count));
+            return (
+                <div className="space-y-3">
+                    {data.slice(0, 5).map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-3">
+                            <div className="text-xs font-bold w-20 truncate">{item.name}</div>
+                            <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                                <div
+                                    className="bg-[#E68A4F] h-full rounded-full flex items-center justify-end pr-2"
+                                    style={{ width: `${(item.count / maxCount) * 100}%` }}
+                                >
+                                    <span className="text-xs font-bold text-white">{item.count}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
         };
 
         function App() {
@@ -186,41 +228,34 @@
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                     <h3 className="font-bold text-gray-700 mb-4 text-center">Health Overview</h3>
-                                    <div className="flex h-64">
-                                        <Recharts.ResponsiveContainer width="50%" height="100%">
-                                            <Recharts.PieChart>
-                                                <Recharts.Pie data={spayedData} innerRadius={40} outerRadius={60} paddingAngle={5} dataKey="value" stroke="none">
-                                                    {spayedData.map((entry, index) => <Recharts.Cell key={`cell-${index}`} fill={entry.fill} />)}
-                                                </Recharts.Pie>
-                                                <Recharts.Tooltip />
-                                            </Recharts.PieChart>
-                                        </Recharts.ResponsiveContainer>
-                                        <Recharts.ResponsiveContainer width="50%" height="100%">
-                                            <Recharts.PieChart>
-                                                <Recharts.Pie data={vacData} innerRadius={40} outerRadius={60} paddingAngle={5} dataKey="value" stroke="none">
-                                                    {vacData.map((entry, index) => <Recharts.Cell key={`cell-${index}`} fill={entry.fill} />)}
-                                                </Recharts.Pie>
-                                                <Recharts.Tooltip />
-                                            </Recharts.PieChart>
-                                        </Recharts.ResponsiveContainer>
-                                    </div>
-                                    <div className="flex justify-around text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                                        <span>Spay/Neuter</span>
-                                        <span>Vaccination</span>
+                                    <div className="flex h-64 gap-4">
+                                        <div className="flex-1 flex flex-col items-center">
+                                            <PieChart data={spayedData} />
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Spay/Neuter</p>
+                                            <div className="text-xs mt-2 text-center">
+                                                {spayedData.map((item, i) => (
+                                                    <p key={i}><span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-1 bg-current"></span>{item.name}: {item.value}</p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 flex flex-col items-center">
+                                            <PieChart data={vacData} />
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Vaccination</p>
+                                            <div className="text-xs mt-2 text-center">
+                                                {vacData.map((item, i) => (
+                                                    <p key={i}><span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-1 bg-current"></span>{item.name}: {item.value}</p>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                     <h3 className="font-bold text-gray-700 mb-4">Street Distribution</h3>
-                                    <div className="h-64">
-                                        <Recharts.ResponsiveContainer width="100%" height="100%">
-                                            <Recharts.BarChart data={streetData} layout="vertical" margin={{ left: 20, right: 20 }}>
-                                                <Recharts.XAxis type="number" hide />
-                                                <Recharts.YAxis dataKey="name" type="category" width={100} style={{ fontSize: '11px', fontWeight: 'bold' }} />
-                                                <Recharts.Tooltip cursor={{ fill: 'transparent' }} />
-                                                <Recharts.Bar dataKey="count" fill="#E68A4F" radius={[0, 10, 10, 0]} />
-                                            </Recharts.BarChart>
-                                        </Recharts.ResponsiveContainer>
+                                    <div className="h-64 flex items-center">
+                                        <div className="w-full">
+                                            <BarChart data={streetData} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
