@@ -9,7 +9,10 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <title>NCE 1 Community Cat Registry</title>
     <style>
-        body { background-color: #FDFBF7; font-family: sans-serif; }
+        body {
+            background-color: #FDFBF7;
+            font-family: sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -18,43 +21,45 @@
     <script type="text/babel">
         const API_URL = 'https://script.google.com/macros/s/AKfycbw1q-xlR7Tt3I_v4NReh5prHyO1j_k2Qhw1jK3kkXGpPX7M2tfRuqxK0nzSw5q7UKXu/exec';
 
-const getImageUrl = (url) => {
-    if (!url || url.toString().trim() === "") {
-        return "https://placehold.co/600x400?text=No+Photo+Yet";
-    }
-    // Since you're using Imgur direct links, we just return the URL as-is!
-    return url;
-};
+        const getImageUrl = (url) => {
+            if (!url || url.toString().trim() === "") {
+                return "https://placehold.co/600x400?text=No+Photo+Yet";
+            }
+            return url;
+        };
 
         function App() {
             const [cats, setCats] = React.useState([]);
             const [loading, setLoading] = React.useState(true);
             const [search, setSearch] = React.useState("");
             const [sortBy, setSortBy] = React.useState("catNameNickname");
+            const [activeTab, setActiveTab] = React.useState("registry");
             const [lastSync, setLastSync] = React.useState("");
 
             React.useEffect(() => {
                 const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(API_URL + "?v=" + Date.now());
                 fetch(proxyUrl)
-                    .then(res => res.json())
-                    .then(data => {
+                    .then((res) => res.json())
+                    .then((data) => {
                         setCats(data);
-                        setLastSync(new Date().toLocaleString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                        }));
+                        setLastSync(
+                            new Date().toLocaleString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true,
+                            })
+                        );
                         setLoading(false);
                     })
-                    .catch(err => {
-                        console.error("The error is:", err);
+                    .catch((err) => {
+                        console.error('The error is:', err);
                         setLoading(false);
                     });
             }, []);
 
-            const filteredCats = cats.filter(cat => {
+            const filteredCats = cats.filter((cat) => {
                 if (!cat.catNameNickname || cat.catNameNickname.toString().trim() === "") return false;
                 const catName = (cat.catNameNickname || "").toString().toLowerCase();
                 const catStreet = (cat.street || "").toString().toLowerCase();
@@ -62,42 +67,61 @@ const getImageUrl = (url) => {
                 return catName.includes(searchTerm) || catStreet.includes(searchTerm);
             });
 
-            if (loading) return (
-                <div className="flex flex-col items-center justify-center min-h-screen">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E68A4F]"></div>
-                    <p className="mt-4 text-gray-600 font-medium">Fetching the cats from Google Sheets...</p>
-                </div>
-            );
+            if (loading)
+                return (
+                    <div className="flex flex-col items-center justify-center min-h-screen">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E68A4F]"></div>
+                        <p className="mt-4 text-gray-600 font-medium">Fetching the cats from Google Sheets...</p>
+                    </div>
+                );
 
             return (
                 <div className="max-w-6xl mx-auto px-4 py-8">
-                    <header className="text-center mb-12">
-                        <h1 className="text-4xl font-bold text-[#333333] mb-2">🐈 NCE 1 Cat Registry</h1>
-                        
-                        <div className="flex flex-col gap-1">
+                    <header className="text-center mb-8">
+                        <h1 className="text-4xl font-bold text-[#333333] mb-4">🐈 NCE 1 Cat Registry</h1>
+
+                        <div className="inline-flex bg-gray-100 p-1 rounded-full mb-6 shadow-inner">
+                            <button
+                                onClick={() => setActiveTab('registry')}
+                                className={`px-8 py-2 rounded-full text-sm font-bold transition-all ${
+                                    activeTab === 'registry'
+                                        ? 'bg-[#E68A4F] text-white shadow-md'
+                                        : 'text-gray-500'
+                                }`}
+                            >
+                                Registry
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('stats')}
+                                className={`px-8 py-2 rounded-full text-sm font-bold transition-all ${
+                                    activeTab === 'stats'
+                                        ? 'bg-[#E68A4F] text-white shadow-md'
+                                        : 'text-gray-500'
+                                }`}
+                            >
+                                Stats & Insights
+                            </button>
+                        </div>
+
+                        <div className="flex flex-col gap-1 mb-6">
                             <p className="text-[#E68A4F] font-bold text-lg">
-                                Total number of Cats: {cats.length}
+                                {activeTab === 'registry' ? `Total Residents: ${cats.length}` : 'Community Health Dashboard'}
                             </p>
                             <p className="text-gray-400 text-[10px] uppercase tracking-widest font-bold">
-                                Last Synced with Sheet: {lastSync}
+                                Last Synced: {lastSync}
                             </p>
                         </div>
 
-                        <div className="mt-6 flex flex-col md:flex-row gap-4 justify-center items-center w-full max-w-2xl mx-auto">
-                            <input 
-                                type="text" 
-                                placeholder="Search by name or street..." 
-                                className="w-full px-6 py-3 rounded-full border-2 border-gray-200 focus:border-[#E68A4F] outline-none shadow-sm"
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                            <select 
-                                className="px-4 py-3 rounded-full border-2 border-gray-200 bg-white text-gray-600 outline-none focus:border-[#E68A4F] cursor-pointer"
-                                onChange={(e) => setSortBy(e.target.value)}
-                            >
-                                <option value="catNameNickname">Sort by Name</option>
-                                <option value="street">Sort by Street</option>
-                            </select>
-                        </div>
+                        {activeTab === 'registry' && (
+                            <div className="w-full max-w-2xl mx-auto px-4">
+                                <input
+                                    type="text"
+                                    placeholder="Search by name or street..."
+                                    className="w-full px-6 py-3 rounded-full border-2 border-gray-200 focus:border-[#E68A4F] outline-none shadow-sm"
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                            </div>
+                        )}
                     </header>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -109,35 +133,45 @@ const getImageUrl = (url) => {
                             })
                             .map((cat, index) => (
                                 <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-md border-b-4 border-[#E68A4F] flex flex-col">
-                                    {/* PHOTO SECTION */}
                                     <div className="h-56 overflow-hidden bg-gray-100 border-b border-gray-100">
-                                        <img 
-                                            src={getImageUrl(cat.photourl)} // Change photoUrl to photourl
+                                        <img
+                                            src={getImageUrl(cat.photourl)}
                                             alt={cat.catNameNickname}
                                             className="w-full h-full object-cover"
                                             loading="lazy"
                                         />
                                     </div>
 
-                                    {/* CONTENT SECTION */}
                                     <div className="p-6">
-                                        <h2 className="text-2xl font-bold text-[#333333]">{cat.catNameNickname || "Unknown Cat"}</h2>
-                                        <p className="text-gray-500 text-sm mb-2">📍 {cat.street || "Unknown Street"}</p>
-                                        
+                                        <h2 className="text-2xl font-bold text-[#333333]">{cat.catNameNickname || 'Unknown Cat'}</h2>
+                                        <p className="text-gray-500 text-sm mb-2">📍 {cat.street || 'Unknown Street'}</p>
+
                                         <div className="flex flex-wrap gap-2 mb-4">
                                             <span className="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold uppercase tracking-wider">
-                                                {cat.gender || "Unknown"}
+                                                {cat.gender || 'Unknown'}
                                             </span>
-                                            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${cat.spayed === "Yes" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                                                {cat.spayed === "Yes" ? "Spayed ✨" : "Not Spayed"}
+                                            <span
+                                                className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
+                                                    cat.spayed === 'Yes'
+                                                        ? 'bg-green-100 text-green-700'
+                                                        : 'bg-red-100 text-red-700'
+                                                }`}
+                                            >
+                                                {cat.spayed === 'Yes' ? 'Spayed ✨' : 'Not Spayed'}
                                             </span>
                                         </div>
 
                                         <div className="border-t pt-4 space-y-2 text-sm">
-                                            <p><strong>Color:</strong> {cat.colorDescription || "N/A"}</p>
-                                            <p><strong>Fed Regularly:</strong> {cat.regularlyFed || "N/A"}</p>
-                                            <p><strong>Vaccinated:</strong> {cat.vaccinatedAntiRabies || "N/A"}</p>
-                                            <p className="italic text-gray-600 mt-2">"{cat.notes || "No additional notes."}"</p>
+                                            <p>
+                                                <strong>Color:</strong> {cat.colorDescription || 'N/A'}
+                                            </p>
+                                            <p>
+                                                <strong>Fed Regularly:</strong> {cat.regularlyFed || 'N/A'}
+                                            </p>
+                                            <p>
+                                                <strong>Vaccinated:</strong> {cat.vaccinatedAntiRabies || 'N/A'}
+                                            </p>
+                                            <p className="italic text-gray-600 mt-2">"{cat.notes || 'No additional notes.'}"</p>
                                         </div>
                                     </div>
                                 </div>
