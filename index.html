@@ -65,7 +65,7 @@
                 <div className="space-y-3">
                     {data.slice(0, 5).map((item, idx) => (
                         <div key={idx} className="flex items-center gap-3">
-                            <div className="text-xs font-bold w-20 truncate">{item.name}</div>
+                            <div className="text-xs font-bold w-40 truncate" title={item.name}>{item.name}</div>
                             <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
                                 <div
                                     className="bg-[#E68A4F] h-full rounded-full flex items-center justify-end pr-2"
