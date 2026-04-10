@@ -69,22 +69,23 @@
 
         // Simple Bar Chart Component
         const BarChart = ({ data }) => {
-            const maxCount = Math.max(...data.map(d => d.count));
+            const maxCount = Math.max(...data.map(d => d.count), 1);
             return (
                 <div className="space-y-3">
-                    {data.slice(0, 5).map((item, idx) => (
-                        <div key={idx} className="flex items-center gap-3">
-                            <div className="text-xs font-bold w-40 truncate" title={item.name}>{item.name}</div>
-                            <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                    {data.slice(0, 5).map((item, idx) => {
+                        const widthPercent = (item.count / maxCount) * 100;
+                        return (
+                            <div key={idx} className="bg-gray-200 rounded-full h-10 overflow-hidden">
                                 <div
-                                    style={{ backgroundColor: item.color, width: `${(item.count / maxCount) * 100}%` }}
-                                    className="h-full rounded-full flex items-center justify-end pr-2"
+                                    style={{ backgroundColor: item.color, width: `${widthPercent}%` }}
+                                    className="h-full rounded-full flex items-center justify-between px-3 text-xs md:text-sm font-bold text-white"
                                 >
-                                    <span className="text-xs font-bold text-white">{item.count}</span>
+                                    <span className="truncate max-w-[65%]">{item.name}</span>
+                                    <span>{item.count}</span>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             );
         };
@@ -268,16 +269,16 @@
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                     <h3 className="font-bold text-gray-800 text-xl md:text-2xl mb-4 text-center">Spay/Neuter Status</h3>
-                                    <div className="h-72 md:h-80 lg:h-92 flex flex-col items-center justify-between">
+                                    <div className="h-[380px] md:h-[420px] lg:h-[460px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-between">
                                         <div className="w-full flex items-center justify-center flex-none">
                                             <div className="w-full max-w-[240px] h-[240px] md:max-w-[280px] md:h-[280px] lg:max-w-[320px] lg:h-[320px]">
                                                 <PieChart data={spayedData} />
                                             </div>
                                         </div>
-                                        <div className="text-sm md:text-base text-center mt-3">
+                                        <div className="w-full text-sm md:text-base text-center mt-3">
                                             {spayedData.map((item, i) => (
-                                                <p key={i}>
-                                                    <span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-2 bg-current"></span>
+                                                <p key={i} className="inline-flex items-center justify-center gap-2 mx-auto">
+                                                    <span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full bg-current"></span>
                                                     {item.name}: {item.value}
                                                 </p>
                                             ))}
@@ -287,16 +288,16 @@
 
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                     <h3 className="font-bold text-gray-800 text-xl md:text-2xl mb-4 text-center">Vaccination Status</h3>
-                                    <div className="h-72 md:h-80 lg:h-92 flex flex-col items-center justify-between">
+                                    <div className="h-[380px] md:h-[420px] lg:h-[460px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-between">
                                         <div className="w-full flex items-center justify-center flex-none">
                                             <div className="w-full max-w-[240px] h-[240px] md:max-w-[280px] md:h-[280px] lg:max-w-[320px] lg:h-[320px]">
                                                 <PieChart data={vacData} />
                                             </div>
                                         </div>
-                                        <div className="text-sm md:text-base text-center mt-3">
+                                        <div className="w-full text-sm md:text-base text-center mt-3">
                                             {vacData.map((item, i) => (
-                                                <p key={i}>
-                                                    <span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-2 bg-current"></span>
+                                                <p key={i} className="inline-flex items-center justify-center gap-2 mx-auto">
+                                                    <span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full bg-current"></span>
                                                     {item.name}: {item.value}
                                                 </p>
                                             ))}
@@ -306,16 +307,16 @@
 
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                     <h3 className="font-bold text-gray-800 text-xl md:text-2xl mb-4 text-center">Gender Distribution</h3>
-                                    <div className="h-72 md:h-80 lg:h-92 flex flex-col items-center justify-between">
+                                    <div className="h-[380px] md:h-[420px] lg:h-[460px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-between">
                                         <div className="w-full flex items-center justify-center flex-none">
                                             <div className="w-full max-w-[240px] h-[240px] md:max-w-[280px] md:h-[280px] lg:max-w-[320px] lg:h-[320px]">
                                                 <PieChart data={genderData} />
                                             </div>
                                         </div>
-                                        <div className="text-sm md:text-base text-center mt-3">
+                                        <div className="w-full text-sm md:text-base text-center mt-3">
                                             {genderData.map((item, i) => (
-                                                <p key={i}>
-                                                    <span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-2 bg-current"></span>
+                                                <p key={i} className="inline-flex items-center justify-center gap-2 mx-auto">
+                                                    <span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full bg-current"></span>
                                                     {item.name}: {item.value}
                                                 </p>
                                             ))}
