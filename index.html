@@ -67,6 +67,28 @@
             );
         };
 
+        // Simple Bar Chart Component
+        const BarChart = ({ data }) => {
+            const maxCount = Math.max(...data.map(d => d.count));
+            return (
+                <div className="space-y-3">
+                    {data.slice(0, 5).map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-3">
+                            <div className="text-xs font-bold w-40 truncate" title={item.name}>{item.name}</div>
+                            <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                                <div
+                                    style={{ backgroundColor: item.color, width: `${(item.count / maxCount) * 100}%` }}
+                                    className="h-full rounded-full flex items-center justify-end pr-2"
+                                >
+                                    <span className="text-xs font-bold text-white">{item.count}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
         function App() {
             const [cats, setCats] = React.useState([]);
             const [loading, setLoading] = React.useState(true);
