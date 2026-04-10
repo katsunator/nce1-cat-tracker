@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -12,7 +15,7 @@
     <style>
         body {
             background-color: #FDFBF7;
-            font-family: sans-serif;
+            font-family: 'JetBrains Mono', monospace;
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -181,9 +184,23 @@
                                 <input
                                     type="text"
                                     placeholder="Search by name or street..."
-                                    className="w-full px-6 py-3 rounded-full border-2 border-gray-200 focus:border-[#E68A4F] outline-none shadow-sm"
+                                    className="w-full px-6 py-3 rounded-full border-2 border-gray-200 focus:border-[#E68A4F] outline-none shadow-sm mb-4"
                                     onChange={(e) => setSearch(e.target.value)}
                                 />
+                                <div className="flex justify-center gap-2">
+                                    <button
+                                        onClick={() => setSortBy('catNameNickname')}
+                                        className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${sortBy === 'catNameNickname' ? 'bg-[#E68A4F] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                                    >
+                                        Sort by Name
+                                    </button>
+                                    <button
+                                        onClick={() => setSortBy('street')}
+                                        className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${sortBy === 'street' ? 'bg-[#E68A4F] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                                    >
+                                        Sort by Street
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </header>
