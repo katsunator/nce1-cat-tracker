@@ -245,51 +245,60 @@
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                                    <h3 className="font-bold text-gray-700 mb-4 text-center">Spay/Neuter Status</h3>
+                                    <h3 className="font-bold text-gray-800 text-xl md:text-2xl mb-4 text-center">Spay/Neuter Status</h3>
                                     <div className="h-72 md:h-80 lg:h-92 flex flex-col items-center justify-between">
-                                    <div className="w-full flex items-center justify-center flex-none">
-                                        <div className="w-full max-w-[240px] h-[240px] md:max-w-[280px] md:h-[280px] lg:max-w-[320px] lg:h-[320px]">
-                                            <PieChart data={spayedData} />
+                                        <div className="w-full flex items-center justify-center flex-none">
+                                            <div className="w-full max-w-[240px] h-[240px] md:max-w-[280px] md:h-[280px] lg:max-w-[320px] lg:h-[320px]">
+                                                <PieChart data={spayedData} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm md:text-base text-center mt-3">
+                                            {spayedData.map((item, i) => (
+                                                <p key={i}>
+                                                    <span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-2 bg-current"></span>
+                                                    {item.name}: {item.value}
+                                                </p>
+                                            ))}
                                         </div>
                                     </div>
-                                    <div className="text-sm md:text-base text-center mt-3">
-                                        {spayedData.map((item, i) => (
-                                            <p key={i}><span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-2 bg-current"></span>{item.name}: {item.value}</p>
-                                        ))}
-                                    </div>
-                                </div>
                                 </div>
 
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                     <h3 className="font-bold text-gray-800 text-xl md:text-2xl mb-4 text-center">Vaccination Status</h3>
                                     <div className="h-72 md:h-80 lg:h-92 flex flex-col items-center justify-between">
-                                    <div className="w-full flex items-center justify-center flex-none">
-                                        <div className="w-full max-w-[240px] h-[240px] md:max-w-[280px] md:h-[280px] lg:max-w-[320px] lg:h-[320px]">
-                                            <PieChart data={vacData} />
+                                        <div className="w-full flex items-center justify-center flex-none">
+                                            <div className="w-full max-w-[240px] h-[240px] md:max-w-[280px] md:h-[280px] lg:max-w-[320px] lg:h-[320px]">
+                                                <PieChart data={vacData} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm md:text-base text-center mt-3">
+                                            {vacData.map((item, i) => (
+                                                <p key={i}>
+                                                    <span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-2 bg-current"></span>
+                                                    {item.name}: {item.value}
+                                                </p>
+                                            ))}
                                         </div>
                                     </div>
-                                    <div className="text-sm md:text-base text-center mt-3">
-                                        {vacData.map((item, i) => (
-                                            <p key={i}><span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-2 bg-current"></span>{item.name}: {item.value}</p>
-                                        ))}
-                                    </div>
-                                </div>
                                 </div>
 
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                     <h3 className="font-bold text-gray-800 text-xl md:text-2xl mb-4 text-center">Gender Distribution</h3>
                                     <div className="h-72 md:h-80 lg:h-92 flex flex-col items-center justify-between">
-                                    <div className="w-full flex items-center justify-center flex-none">
-                                        <div className="w-full max-w-[240px] h-[240px] md:max-w-[280px] md:h-[280px] lg:max-w-[320px] lg:h-[320px]">
-                                            <PieChart data={genderData} />
+                                        <div className="w-full flex items-center justify-center flex-none">
+                                            <div className="w-full max-w-[240px] h-[240px] md:max-w-[280px] md:h-[280px] lg:max-w-[320px] lg:h-[320px]">
+                                                <PieChart data={genderData} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm md:text-base text-center mt-3">
+                                            {genderData.map((item, i) => (
+                                                <p key={i}>
+                                                    <span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-2 bg-current"></span>
+                                                    {item.name}: {item.value}
+                                                </p>
+                                            ))}
                                         </div>
                                     </div>
-                                    <div className="text-sm md:text-base text-center mt-3">
-                                        {genderData.map((item, i) => (
-                                            <p key={i}><span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-2 bg-current"></span>{item.name}: {item.value}</p>
-                                        ))}
-                                    </div>
-                                </div>
                                 </div>
 
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
