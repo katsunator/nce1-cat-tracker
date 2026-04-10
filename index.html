@@ -72,8 +72,8 @@
                             <div className="text-xs font-bold w-40 truncate" title={item.name}>{item.name}</div>
                             <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
                                 <div
-                                    className="bg-[#E68A4F] h-full rounded-full flex items-center justify-end pr-2"
-                                    style={{ width: `${(item.count / maxCount) * 100}%` }}
+                                    style={{ backgroundColor: item.color, width: `${(item.count / maxCount) * 100}%` }}
+                                    className="h-full rounded-full flex items-center justify-end pr-2"
                                 >
                                     <span className="text-xs font-bold text-white">{item.count}</span>
                                 </div>
@@ -141,14 +141,28 @@
                 { name: 'Pending', value: cats.filter(c => c.vaccinatedAntiRabies !== 'Yes').length, fill: '#e5e7eb' }
             ];
 
+            const genderCounts = cats.reduce((acc, cat) => {
+                const gender = cat.gender || 'Unknown';
+                acc[gender] = (acc[gender] || 0) + 1;
+                return acc;
+            }, {});
+
+            const genderData = [
+                { name: 'Male', value: genderCounts['Male'] || 0, fill: '#60a5fa' },
+                { name: 'Female', value: genderCounts['Female'] || 0, fill: '#f472b6' },
+                { name: 'Unknown', value: genderCounts['Unknown'] || 0, fill: '#cbd5e1' }
+            ];
+
             const streetCounts = cats.reduce((acc, cat) => {
                 acc[cat.street] = (acc[cat.street] || 0) + 1;
                 return acc;
             }, {});
 
-            const streetData = Object.keys(streetCounts).map(street => ({
+            const colors = ['#E68A4F', '#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa'];
+            const streetData = Object.keys(streetCounts).map((street, idx) => ({
                 name: street,
-                count: streetCounts[street]
+                count: streetCounts[street],
+                color: colors[idx % colors.length]
             })).sort((a, b) => b.count - a.count);
 
             return (
@@ -248,21 +262,25 @@
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                                    <h3 className="font-bold text-gray-700 mb-4 text-center">Health Overview</h3>
-                                    <div className="flex h-64 md:h-80 lg:h-96 gap-4">
-                                        <div className="flex-1 flex flex-col items-center">
+                                    <h3 className="font-bold text-gray-700 mb-4 text-center">Spay/Neuter Status</h3>
+                                    <div className="h-64 md:h-80 lg:h-96 flex items-center">
+                                        <div className="w-full flex flex-col items-center">
                                             <PieChart data={spayedData} />
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Spay/Neuter</p>
-                                            <div className="text-xs mt-2 text-center">
+                                            <div className="text-xs mt-4 text-center">
                                                 {spayedData.map((item, i) => (
                                                     <p key={i}><span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-1 bg-current"></span>{item.name}: {item.value}</p>
                                                 ))}
                                             </div>
                                         </div>
-                                        <div className="flex-1 flex flex-col items-center">
+                                    </div>
+                                </div>
+
+                                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                                    <h3 className="font-bold text-gray-700 mb-4 text-center">Vaccination Status</h3>
+                                    <div className="h-64 md:h-80 lg:h-96 flex items-center">
+                                        <div className="w-full flex flex-col items-center">
                                             <PieChart data={vacData} />
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Vaccination</p>
-                                            <div className="text-xs mt-2 text-center">
+                                            <div className="text-xs mt-4 text-center">
                                                 {vacData.map((item, i) => (
                                                     <p key={i}><span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-1 bg-current"></span>{item.name}: {item.value}</p>
                                                 ))}
@@ -272,7 +290,21 @@
                                 </div>
 
                                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                                    <h3 className="font-bold text-gray-700 mb-4">Street Distribution</h3>
+                                    <h3 className="font-bold text-gray-700 mb-4 text-center">Gender Distribution</h3>
+                                    <div className="h-64 md:h-80 lg:h-96 flex items-center">
+                                        <div className="w-full flex flex-col items-center">
+                                            <PieChart data={genderData} />
+                                            <div className="text-xs mt-4 text-center">
+                                                {genderData.map((item, i) => (
+                                                    <p key={i}><span style={{ color: item.fill }} className="inline-block w-2 h-2 rounded-full mr-1 bg-current"></span>{item.name}: {item.value}</p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                                    <h3 className="font-bold text-gray-700 mb-4 text-center">Street Distribution</h3>
                                     <div className="h-64 md:h-80 lg:h-96 flex items-center">
                                         <div className="w-full">
                                             <BarChart data={streetData} />
