@@ -101,21 +101,24 @@
             React.useEffect(() => {
                 const targetUrl = API_URL + "?v=" + Date.now();
 
-                // Try corsproxy.io first (correct current format), then fall back
-                // to a different free proxy if that fails for any reason.
-                const proxies = [
+                // Try a direct fetch first (no proxy) - Apps Script web apps
+                // deployed as "Anyone" often already allow cross-origin GET
+                // requests. Only fall back to third-party proxies if that's
+                // genuinely blocked.
+                const attempts = [
+                    targetUrl,
                     'https://corsproxy.io/?url=' + encodeURIComponent(targetUrl),
                     'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl),
                 ];
 
                 const tryFetch = (index) => {
-                    if (index >= proxies.length) {
-                        console.error('All proxies failed to reach Apps Script.');
+                    if (index >= attempts.length) {
+                        console.error('All fetch attempts failed to reach Apps Script.');
                         setLoadError(true);
                         setLoading(false);
                         return;
                     }
-                    fetch(proxies[index])
+                    fetch(attempts[index])
                         .then((res) => {
                             if (!res.ok) throw new Error('Bad response: ' + res.status);
                             return res.json();
@@ -134,7 +137,7 @@
                             setLoading(false);
                         })
                         .catch((err) => {
-                            console.error(`Proxy ${index} (${proxies[index]}) failed:`, err);
+                            console.error(`Attempt ${index} (${attempts[index]}) failed:`, err);
                             tryFetch(index + 1);
                         });
                 };
