@@ -92,51 +92,55 @@
         function App() {
             const [cats, setCats] = React.useState([]);
             const [loading, setLoading] = React.useState(true);
+            const [loadError, setLoadError] = React.useState(false);
             const [search, setSearch] = React.useState("");
             const [sortBy, setSortBy] = React.useState("catNameNickname");
             const [activeTab, setActiveTab] = React.useState("registry");
             const [lastSync, setLastSync] = React.useState("");
 
-React.useEffect(() => {
-    const targetUrl = API_URL + "?v=" + Date.now();
+            React.useEffect(() => {
+                const targetUrl = API_URL + "?v=" + Date.now();
 
-    const proxies = [
-        'https://corsproxy.io/?url=' + encodeURIComponent(targetUrl),
-        'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl),
-    ];
+                // Try corsproxy.io first (correct current format), then fall back
+                // to a different free proxy if that fails for any reason.
+                const proxies = [
+                    'https://corsproxy.io/?url=' + encodeURIComponent(targetUrl),
+                    'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl),
+                ];
 
-    const tryFetch = (index) => {
-        if (index >= proxies.length) {
-            console.error('All proxies failed.');
-            setLoading(false);
-            return;
-        }
-        fetch(proxies[index])
-            .then((res) => {
-                if (!res.ok) throw new Error('Bad response: ' + res.status);
-                return res.json();
-            })
-            .then((data) => {
-                setCats(data);
-                setLastSync(
-                    new Date().toLocaleString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                    })
-                );
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error(`Proxy ${index} failed:`, err);
-                tryFetch(index + 1);
-            });
-    };
+                const tryFetch = (index) => {
+                    if (index >= proxies.length) {
+                        console.error('All proxies failed to reach Apps Script.');
+                        setLoadError(true);
+                        setLoading(false);
+                        return;
+                    }
+                    fetch(proxies[index])
+                        .then((res) => {
+                            if (!res.ok) throw new Error('Bad response: ' + res.status);
+                            return res.json();
+                        })
+                        .then((data) => {
+                            setCats(data);
+                            setLastSync(
+                                new Date().toLocaleString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true,
+                                })
+                            );
+                            setLoading(false);
+                        })
+                        .catch((err) => {
+                            console.error(`Proxy ${index} (${proxies[index]}) failed:`, err);
+                            tryFetch(index + 1);
+                        });
+                };
 
-    tryFetch(0);
-}, []);
+                tryFetch(0);
+            }, []);
 
             const filteredCats = cats.filter((cat) => {
                 if (!cat.catNameNickname || cat.catNameNickname.toString().trim() === "") return false;
@@ -150,6 +154,17 @@ React.useEffect(() => {
                 <div className="flex flex-col items-center justify-center min-h-screen">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E68A4F]"></div>
                     <p className="mt-4 text-gray-600 font-medium">Fetching the cats from Google Sheets...</p>
+                </div>
+            );
+
+            if (loadError) return (
+                <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
+                    <p className="text-4xl mb-4">🙀</p>
+                    <p className="text-gray-700 font-bold text-lg mb-2">Couldn't load the cat data.</p>
+                    <p className="text-gray-500 text-sm max-w-md">
+                        The data source or the connection to it might be temporarily down.
+                        Try refreshing in a bit — check the browser console for details.
+                    </p>
                 </div>
             );
 
